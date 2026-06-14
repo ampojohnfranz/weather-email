@@ -1,0 +1,30 @@
+name: Daily Weather Brief
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # Runs 7:00 AM PHT (UTC+8 = UTC-8hrs, so 11PM UTC)
+  workflow_dispatch:       # Lets you trigger it manually too
+
+jobs:
+  send-weather:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests python-dotenv
+
+      - name: Run script
+        env:
+          OPENWEATHER_KEY: ${{ secrets.OPENWEATHER_KEY }}
+          EMAIL: ${{ secrets.EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          RECIPIENT: ${{ secrets.RECIPIENT }}
+        run: python main.py
